@@ -1,0 +1,9 @@
+1- El mensaje win: cld del final aparece en la pantalla del marcador y se sobrepone a los games
+2- poner metodo para anular ultimo punto
+3- poner efectos cuando gana un jugador
+4- hacer que cuando se encienda la raspberry muestre una imgen en el panel para indicar que ya esta arriba
+5- poner metodo para que la raspberry se pueda conectar a un celular
+6- mostrar una pagina desde el servidor que se muestre cuando se incia un partido para poner los parametros (nombre jugadores, si se jugara un partido o un tiebrake largo, si es partido a cuantos sets se jugara 3 o 5)
+7- mostrar un html para poder seguir el partido en el celular que muestre la misma info que el tablero
+8- arreglar error que no permite descargar el json con el partido
+9- poder repetir el partido punto a punto 
