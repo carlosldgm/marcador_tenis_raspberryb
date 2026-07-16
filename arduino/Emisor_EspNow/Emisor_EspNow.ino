@@ -2,7 +2,7 @@
 #include <WiFi.h>
 
 #define LED_PIN 12
-#define BOTON_PIN 4
+#define BOTON_J1 4
 
 // Reemplaza con la MAC de tu ESP32 receptor
 uint8_t macReceptor[] = {0xA0, 0xDD, 0x6C, 0x10, 0x5B, 0xE4};//A0:DD:6C:10:5B:E4
@@ -16,7 +16,7 @@ Mensaje datoEnviar;
 void setup() {
   Serial.begin(115200);
   pinMode(LED_PIN, OUTPUT);
-  pinMode(BOTON_PIN, INPUT_PULLUP);
+  pinMode(BOTON_J1, INPUT_PULLUP);
 
   WiFi.mode(WIFI_STA);
 
@@ -34,13 +34,21 @@ void setup() {
 }
 
 void loop() {
-  int estadoBoton = digitalRead(BOTON_PIN);
+  /*
+  Las acciones que tendran los distintos botones seran
+  1 = Punto jugador 1
+  2 = Punto jugador 2
+  3 = Undo
+  4 = Reset
+  5 = Test Display
+  */
+  int estadoBoton_J1 = digitalRead(BOTON_J1);
 
-  if (estadoBoton == LOW) {
-    digitalWrite(LED_PIN, HIGH); // Enciende LED local (igual que etapa 1)
+  if (estadoBoton_J1 == LOW) {
+    digitalWrite(LED_PIN, HIGH); // Enciende LED local 
 
-    strcpy(datoEnviar.texto, "Boton presionado");
-    Serial.println("Boton Presionado");
+    strcpy(datoEnviar.texto, "1");
+    Serial.println("Boton Presionado punto J1");
     esp_now_send(macReceptor, (uint8_t *) &datoEnviar, sizeof(datoEnviar));
 
     delay(300); // Evita enviar el mensaje demasiadas veces seguidas
