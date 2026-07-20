@@ -1,88 +1,57 @@
 #!/usr/bin/env python3
-
+# serial_gateway.py
 import serial
-import requests
 
 SERIAL_PORT = "/dev/ttyUSB0"
 BAUDRATE = 115200
 
-BASE_URL = "http://localhost:5000"
 
-print("--------------------------------")
-print(" Tennis Serial Gateway")
-print("--------------------------------")
+def run(controller):
+    """
+    Lee continuamente el puerto serial y llama directo a los métodos
+    del MatchController. No conoce Flask ni HTTP.
+    """
+    print("--------------------------------")
+    print(" Tennis Serial Gateway")
+    print("--------------------------------")
 
-ser = serial.Serial(
-    SERIAL_PORT,
-    BAUDRATE,
-    timeout=1
-)
+    ser = serial.Serial(SERIAL_PORT, BAUDRATE, timeout=1)
 
-def post(endpoint, body=None):
+    while True:
+        try:
+            command = ser.readline().decode().strip()
 
-    try:
+            if command == "":
+                continue
 
-        if body:
+            print("RX:", command)
 
-            r = requests.post(
-                BASE_URL + endpoint,
-                json=body,
-                timeout=2
-            )
+            if command == "POINT:1":
+                controller.point(1)
 
-        else:
+            elif command == "POINT:2":
+                controller.point(2)
 
-            r = requests.post(
-                BASE_URL + endpoint,
-                timeout=2
-            )
+            elif command == "UNDO":
+                controller.undo()
 
-        print(f"{endpoint} -> {r.status_code}")
+            elif command == "RESET":
+                controller.reset()
 
-    except Exception as e:
+            elif command == "TEST":
+                controller.test_display()
 
-        print(e)
+            else:
+                print("Comando desconocido:", command)
+
+        except Exception as e:
+            print(e)
 
 
-while True:
+if __name__ == "__main__":
+    # Permite correr el gateway solo, sin main.py ni Flask,
+    # para pruebas rápidas del hardware.
+    from match_controller import MatchController
 
-    try:
-
-        command = ser.readline().decode().strip()
-
-        if command == "":
-            continue
-
-        print("RX:", command)
-
-        if command == "POINT:1":
-
-            post("/point", {
-                "player":1
-            })
-
-        elif command == "POINT:2":
-
-            post("/point", {
-                "player":2
-            })
-
-        elif command == "UNDO":
-
-            post("/undo")
-
-        elif command == "RESET":
-
-            post("/reset")
-
-        elif command == "TEST":
-
-            post("/test-display")
-
-        else:
-
-            print("Comando desconocido:", command)
-
-    except Exception as e:
-
-        print(e)
+    controller = MatchController()
+    run(controller)
